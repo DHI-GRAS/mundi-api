@@ -11,6 +11,22 @@ QUERY_URL = ('https://catalog-browse.default.mundiwebservices.com'
              '/acdc/catalog/proxy/search/{satellite}/opensearch?maxRecords=50')
 
 
+def _parse_date(date):
+    if isinstance(date, datetime.datetime):
+        return date
+    try:
+        return dateutil.parser.parse(date)
+    except ValueError:
+        raise ValueError('Date {date} is not in a valid format. Use Datetime object or iso string')
+
+
+def _add_time(date):
+    if date.hour == 0 and date.minute == 0 and date.second == 0:
+        date = date + datetime.timedelta(hours=23, minutes=59, seconds=59)
+        return date
+    return date
+
+
 def _recursive_dict(element):
     import re
     if not element.text and len(element.attrib):
@@ -40,8 +56,11 @@ def _build_query(base_url, start_date=None, end_date=None, geometry=None, **kwar
     query_params = {}
 
     if start_date is not None:
+        start_date = _parse_date(start_date)
         query_params['timeStart'] = start_date.isoformat()
     if end_date is not None:
+        end_date = _parse_date(end_date)
+        end_date = _add_time(end_date)
         query_params['timeEnd'] = end_date.isoformat()
 
     if geometry is not None:
@@ -107,9 +126,9 @@ def query(satellite, start_date=None, end_date=None,
         Name of the satellite, e.g. Sentinel1, Sentinel2, Sentinel3.
     product: str
         Name of the product to query for, e.g. SLC, GRD, L1C, OLCI
-    start_date: datetime.datetime
+    start_date: datetime.datetime, str
         Only find products on or after this date
-    end_date: datetime.datetime
+    end_date: datetime.datetime, str
         Only find products on or before this date
     geometry: WKT polygon or object implementing __geo_interface__
         Geometry of area to search within
