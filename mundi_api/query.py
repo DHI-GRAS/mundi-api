@@ -8,7 +8,15 @@ from mundi_api._product_mappings import PRODUCT_MAPPINGS
 
 
 QUERY_URL = ('https://catalog-browse.default.mundiwebservices.com'
-             '/acdc/catalog/proxy/search/{satellite}/opensearch?productType={product}')
+             '/acdc/catalog/proxy/search/{satellite}/opensearch?maxRecords=50')
+
+
+def _recursive_dict(element):
+    import re
+    if not element.text and len(element.attrib):
+        return re.sub(r"\s*{.*}\s*", "", element.tag), element.attrib
+    return re.sub(r"\s*{.*}\s*", "", element.tag), \
+        dict(map(_recursive_dict, element)) or element.text
 
 
 def _tastes_like_wkt_polygon(geom):
@@ -89,7 +97,7 @@ def _get_pbar(xml):
     return tqdm.tqdm(total=total // per_page + 1)
 
 
-def query(satellite, product, start_date=None, end_date=None,
+def query(satellite, start_date=None, end_date=None,
           geometry=None, progress_bar=True, **kwargs):
     """Query the mundi API for available products.
 
@@ -114,21 +122,19 @@ def query(satellite, product, start_date=None, end_date=None,
 
     Returns
     -------
-    products: list of dict
-        List of found downloadable products. Each product contains the download link along with
-        product-specific metadata. The included metadata depends on the mapping for the given
-        product in _product_mappings.py. If no mapping is defined for the product, the default
-        mapping is used.
+    dict[string, dict]
+        Products returned by the query as a dictionary with the product ID as the key and
+        the product's attributes (a dictionary) as the value.
     """
     query_str = _build_query(
-        QUERY_URL.format(satellite=satellite, product=product),
+        QUERY_URL.format(satellite=satellite),
         start_date,
         end_date,
         geometry,
         **kwargs
     )
 
-    products = []
+    products = {}
     pbar = None
     while query_str is not None:
         r = requests.get(query_str)
@@ -138,10 +144,10 @@ def query(satellite, product, start_date=None, end_date=None,
 
         query_str = _find_next(xml)
 
-        mapping = PRODUCT_MAPPINGS.get(product, PRODUCT_MAPPINGS['default'])
-        products += [_parse_entry(entry, mapping) for entry in
-                     xml.findall('entry', namespaces=xml.nsmap) if _is_online(entry)]
-
+        for entry in xml.findall('entry', namespaces=xml.nsmap):
+            if _is_online(entry):
+                entry_dict = _recursive_dict(entry)[1]
+                products[entry_dict['id']] = entry_dict
         if progress_bar:
             if pbar is None:
                 pbar = _get_pbar(xml)
