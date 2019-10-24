@@ -15,9 +15,9 @@ QUERY_URL = ('https://catalog-browse.default.mundiwebservices.com'
 
 def _parse_date(date):
     if isinstance(date, datetime.datetime):
-        return date
+        return date.replace(microsecond=0)
     try:
-        return dateutil.parser.parse(date)
+        return dateutil.parser.parse(date).replace(microsecond=0)
     except ValueError:
         raise ValueError('Date {date} is not in a valid format. Use Datetime object or iso string')
 
