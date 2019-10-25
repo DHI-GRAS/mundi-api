@@ -14,6 +14,7 @@ def test_download(url, tmp_path, workdir):
     filename = Path(urlparse(url).path).name
     assert outfile / f'{filename}.zip' == Path(write_path)
 
+
 def test_download_list(urls, tmp_path):
     outfile, workdir = tmp_path / "outfiles", tmp_path / "workdir"
     outfile.mkdir()
@@ -28,6 +29,7 @@ def test_download_list(urls, tmp_path):
         filename = Path(urlparse(url).path).name
         file_assertions.add(str(outfile / f'{filename}.zip'))
     assert created_files == file_assertions
+
 
 def create_workdir_if_not_exists(p):
     if p:
