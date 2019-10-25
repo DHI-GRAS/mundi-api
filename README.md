@@ -6,17 +6,25 @@ Exposes a single function `query`
 
 ```python
 from mundi_api.query import query
+from mundi_api.download import download, download_list
 import geojson
+
 
 from datetime import datetime
 
 with open('my_shape.geojson') as f:
     my_shape = geojson.load(f)
 
-query('Sentinel1', 'SLC',
+q = query('Sentinel1', 'SLC',
       start_date=datetime(2019, 1, 1),
       end_date=datetime(2019, 1, 2),
       geometry=my_shape)
+
+download_links = [q[sat_id]['link']['href'] for sat_id in q.keys()]
+
+download(download_links[0], outfile='/home/andreas/data/')
+
+download_list(download_links[1:11], threads=10)
 ```
 
 ```python
