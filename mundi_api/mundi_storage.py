@@ -82,7 +82,7 @@ class S3Storage:
         objects_list = self.find(bucket, prefix)
         files: List[Path] = []
         for s3_key in objects_list:
-            file_path = f'{prefix}/{s3_key['Key'].replace(product_key, '', 1)}'
+            file_path = f"{prefix}/{s3_key['Key'].replace(product_key, '', 1)}"
             if file_path:
                 if file_path.endswith('/'):
                     dest.joinpath(Path(file_path)).mkdir(
