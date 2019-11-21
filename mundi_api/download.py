@@ -44,7 +44,7 @@ def download(url, outfile=None, workdir=None):
     shutil.move(local_path, outfile)
 
 
-def donwload_from_s3(url, access_key, secret_key, target_path):
+def download_from_s3(url, access_key, secret_key, target_path):
     from urllib.parse import urlparse
     import boto3
     from botocore.client import Config
