@@ -85,15 +85,19 @@ class S3Storage:
         for s3_key in objects_list:
             file_path = s3_key['Key'].replace(product_key, '', 1)
             if file_path:
-                if file_path.endswith('/'):
-                    dest.joinpath(Path(file_path)).mkdir(
+                if len(file_path.split('/')) > 2:
+                    file_folder = '/'.join(file_path.split('/')[:-1])
+                    dest.joinpath(Path(file_folder)).mkdir(
                         parents=True, exist_ok=True)
+                    files.append(Path(file_path))
                 else:
                     files.append(Path(file_path))
 
         for item in files:
             dest.joinpath(item).parent.mkdir(parents=True, exist_ok=True)
             print(bucket)
+            print(pkey)
+            print(item)
             print(pkey.joinpath(item))
             print(str(dest.joinpath(item)))
             self.s3_client.download_file(bucket, str(
