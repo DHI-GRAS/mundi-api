@@ -12,11 +12,11 @@ setup(
     install_requires=[
         'requests',
         'shapely',
-        'lxml'
+        'lxml',
+        'tqdm'
     ],
     extras_require={
-        'all': [
-            'tqdm',
+        's3': [
             'boto3'
         ]
     }
