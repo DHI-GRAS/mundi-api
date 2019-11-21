@@ -88,7 +88,7 @@ class S3Storage:
                 if len(file_path.split('/')) > 2:
                     file_folder = os.path.dirname(file_path)
                     print(file_folder)
-                    dest.joinpath(Path(file_folder)).mkdir(
+                    dest.joinpath(Path(file_folder.lstrip('/'))).mkdir(
                         parents=True, exist_ok=True)
                     files.append(Path(file_path))
                 else:
