@@ -16,7 +16,8 @@ setup(
     ],
     extras_require={
         'all': [
-            'tqdm'
+            'tqdm',
+            'boto3'
         ]
     }
 )
