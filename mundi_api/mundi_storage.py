@@ -90,12 +90,11 @@ class S3Storage:
                     print(file_folder)
                     dest.joinpath(Path(file_folder.lstrip('/'))).mkdir(
                         parents=True, exist_ok=True)
-                    files.append(Path(file_path))
+                    files.append(Path(file_path.lstrip('/')))
                 else:
-                    files.append(Path(file_path))
+                    files.append(Path(file_path.lstrip('/')))
 
         for item in files:
-            item = item.lstrip('/')
             dest.joinpath(item).parent.mkdir(parents=True, exist_ok=True)
             self.s3_client.download_file(bucket, str(
                 pkey.joinpath(item)), str(dest.joinpath(item)))
