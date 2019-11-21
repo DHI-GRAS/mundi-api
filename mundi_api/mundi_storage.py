@@ -71,7 +71,7 @@ class S3Storage:
             dest = Path(destination.rstrip('/'))
         pkey = Path(product_key)
         try:
-            dest.mkdir(exist_ok=True)
+            dest.mkdir([arents=True, exist_ok=True)
         except OSError as exc:
             if exc.errno != errno.EEXIST:
                 raise
