@@ -71,7 +71,7 @@ class S3Storage:
             dest = Path(destination.rstrip('/'))
         pkey = Path(product_key)
         try:
-            dest.mkdir([arents=True, exist_ok=True)
+            dest.mkdir(parents=True, exist_ok=True)
         except OSError as exc:
             if exc.errno != errno.EEXIST:
                 raise
@@ -87,7 +87,6 @@ class S3Storage:
             if file_path:
                 if len(file_path.split('/')) > 2:
                     file_folder = os.path.dirname(file_path)
-                    print(file_folder)
                     dest.joinpath(Path(file_folder.lstrip('/'))).mkdir(
                         parents=True, exist_ok=True)
                     files.append(Path(file_path.lstrip('/')))
