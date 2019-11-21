@@ -65,6 +65,8 @@ def download_from_s3(url, access_key, secret_key, target_path):
     path_split = urlparse(url).path.split('/')
     bucket = path_split[1]
     prefix = '/'.join(path_split[2:])
+    print(bucket)
+    print(prefix)
     storage_client = S3Storage(s3_client)
     storage_client.download_product(bucket, prefix, target_path)
 
