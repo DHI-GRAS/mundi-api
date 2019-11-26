@@ -33,7 +33,6 @@ def download(url, outfile=None, workdir=None):
     if os.path.isdir(outfile):
         outfile /= f'{filename}.zip'
 
-
     workdir = _format_path(workdir)
 
     temp = tempfile.NamedTemporaryFile(delete=False, dir=workdir)
@@ -66,6 +65,8 @@ def download_from_s3(url, access_key, secret_key, target_path):
     bucket = path_split[1]
     prefix = '/'.join(path_split[2:])
     product_folder = path_split[-1]
+    if product_folder.endswith('.zip'):
+        product_folder = product_folder.rstrip('.zip')
     storage_client = S3Storage(s3_client)
     storage_client.download_product(bucket, prefix, os.path.join(target_path, product_folder))
 
