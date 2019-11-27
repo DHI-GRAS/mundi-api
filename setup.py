@@ -14,7 +14,8 @@ setup(
         'shapely',
         'lxml',
         'tqdm',
-        'python-dateutil'
+        'python-dateutil',
+        'boto3'
     ],
     extras_require={
         's3': [
