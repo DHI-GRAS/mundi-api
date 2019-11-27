@@ -43,24 +43,25 @@ def download(url, outfile=None, workdir=None):
     shutil.move(local_path, outfile)
 
 
-def download_from_s3(url, access_key, secret_key, target_path):
+def download_from_s3(url, access_key, secret_key, target_path, s3_client=None):
     from urllib.parse import urlparse
     import boto3
     from botocore.client import Config
     from mundi_api.mundi_storage import S3Storage
 
-    s3_client = boto3.client(
-        's3',
-        endpoint_url='https://obs.eu-de.otc.t-systems.com/',
-        use_ssl=False,
-        aws_access_key_id=access_key,
-        aws_secret_access_key=secret_key,
-        config=Config(
-            signature_version='s3',
-            connect_timeout=60,
-            read_timeout=60,
+    if s3_client = None:
+        s3_client = boto3.client(
+            's3',
+            endpoint_url='https://obs.eu-de.otc.t-systems.com/',
+            use_ssl=False,
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+            config=Config(
+                signature_version='s3',
+                connect_timeout=60,
+                read_timeout=60,
+            )
         )
-    )
     path_split = urlparse(url).path.split('/')
     bucket = path_split[1]
     prefix = '/'.join(path_split[2:])
@@ -80,8 +81,23 @@ def _format_path(path):
 
 
 def download_list_from_s3(urls, access_key, secret_key, target_path, threads=5):
+    import boto3
+    from botocore.client import Config
+
+    s3_client = boto3.client(
+            's3',
+            endpoint_url='https://obs.eu-de.otc.t-systems.com/',
+            use_ssl=False,
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+            config=Config(
+                signature_version='s3',
+                connect_timeout=60,
+                read_timeout=60,
+            )
+    )
     pool = ThreadPool(threads)
-    download_lambda = lambda x: download_from_s3(x, access_key=access_key, secret_key=secret_key, target_path=target_path)
+    download_lambda = lambda x: download_from_s3(x, access_key=access_key, secret_key=secret_key, target_path=target_path, s3_client=s3_client)
     pool.map(download_lambda, urls)
 
 
