@@ -13,7 +13,8 @@ setup(
         'requests',
         'shapely',
         'lxml',
-        'tqdm'
+        'tqdm',
+        'dateutil'
     ],
     extras_require={
         's3': [
