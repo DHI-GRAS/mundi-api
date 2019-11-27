@@ -14,7 +14,7 @@ setup(
         'shapely',
         'lxml',
         'tqdm',
-        'dateutil'
+        'python-dateutil'
     ],
     extras_require={
         's3': [
