@@ -79,6 +79,12 @@ def _format_path(path):
     return path
 
 
+def download_list_from_s3(urls, access_key, secret_key, target_path, threads=5):
+    pool = ThreadPool(threads)
+    download_lambda = lambda x: download(x, access_key=access_key, secret_key=secret_key, target_path=target_path)
+    pool.map(download_lambda, urls)
+
+
 def download_list(urls, outdir=None, workdir=None, threads=3):
     """Downloads a list of URLs
 
