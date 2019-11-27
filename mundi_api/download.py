@@ -49,7 +49,7 @@ def download_from_s3(url, access_key, secret_key, target_path, s3_client=None):
     from botocore.client import Config
     from mundi_api.mundi_storage import S3Storage
 
-    if s3_client = None:
+    if not s3_client:
         s3_client = boto3.client(
             's3',
             endpoint_url='https://obs.eu-de.otc.t-systems.com/',
